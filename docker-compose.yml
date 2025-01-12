@@ -8,8 +8,8 @@ services:
     ports:
       - "${AGENT_PORT}:3000"
     environment:
-      - NODE_ENV=${NODE_ENV-development}
-      - FRONTEND_URL=${PUBLIC_URL-http://localhost:${WEB_PORT}}
+      - NODE_ENV=${NODE_ENV-production}
+      - FRONTEND_URL=${PUBLIC_URL:-http://localhost:${WEB_PORT}}
     volumes:
       - ./agent:/app
       - /app/node_modules  # Prevents overwriting `node_modules` in the container
@@ -20,10 +20,10 @@ services:
       args:
         NODE_ENV: ${NODE_ENV:-production}
     ports:
-      - "${WEB_PORT-3001}:3000"
+      - "${WEB_PORT:-3001}:3000"
     environment:
-      - NODE_ENV=${NODE_ENV-development}
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL-http://localhost:${AGENT_PORT}}
+      - NODE_ENV=${NODE_ENV:-production}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:${AGENT_PORT}}
     volumes:
       - ./web:/app
       - /app/node_modules  # Prevents overwriting `node_modules` in the container

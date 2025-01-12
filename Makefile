@@ -5,11 +5,11 @@ NODE_MODULES = node_modules
 # Rules
 .PHONY: dev hi install install-web install-agent build start start-docker
 
-# hi: install build start
+hi: install-dev dev
 
 all: install-local build start
 
-dev: install-dev install-local build start-dev
+dev: install-local build start-dev
 
 
 # Initializes the repository
