@@ -1,0 +1,29 @@
+services:
+  agent:
+    build:
+      context: ./agent
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: ${NODE_ENV:-production}
+    ports:
+      - "${AGENT_PORT}:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV-development}
+      - FRONTEND_URL=${PUBLIC_URL-http://localhost:${WEB_PORT}}
+    volumes:
+      - ./agent:/app
+      - /app/node_modules  # Prevents overwriting `node_modules` in the container
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: ${NODE_ENV:-production}
+    ports:
+      - "${WEB_PORT-3001}:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV-development}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL-http://localhost:${AGENT_PORT}}
+    volumes:
+      - ./web:/app
+      - /app/node_modules  # Prevents overwriting `node_modules` in the container
