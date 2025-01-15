@@ -1,5 +1,4 @@
-# Stage 1: Build
-FROM node:lts AS builder
+FROM node:lts
 
 # Set the working directory
 WORKDIR /app
@@ -8,29 +7,15 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 # Install dependencies
-ARG NODE_ENV=production
-RUN if [ "$NODE_ENV" = "development" ]; then npm install; else npm install --production; fi
+# ARG NODE_ENV=production
+# RUN if [ "$NODE_ENV" == "development" ]; then npm install; else npm install --production; fi
+RUN npm install
 
 # Copy the rest of the application code
 COPY . .
-
-# Build the application
-RUN if [ "$NODE_ENV" != "development" ]; then npm run build; fi
-
-# Stage 2: Production
-FROM node:lts-jod
-
-# Set the working directory
-WORKDIR /app
-
-# Copy only the necessary files from the builder stage
-COPY --from=builder /app/package.json /app/package-lock.json /app/
-COPY --from=builder /app/.next /app/.next
-COPY --from=builder /app/public /app/public
-COPY --from=builder /app/node_modules /app/node_modules
 
 # Expose port 3000
 EXPOSE 3000
 
 # Start the application
-CMD if [ "$NODE_ENV" = "development" ]; then npm run dev; else npm run start; fi
+CMD npm run dev
