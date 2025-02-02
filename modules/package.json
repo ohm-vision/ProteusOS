@@ -1,0 +1,14 @@
+{
+    "name": "@proteus/modules",
+    "version": "1.0.0",
+    "description": "ProteusOS installed modules",
+    "private": true,
+    "author": "Ohm Vision, Inc",
+    "keywords": [
+        "proteus",
+        "modules"
+    ],
+    "dependencies": {
+        "proteus-devops": "bitbucket:ohm-vision/proteus-devops#feat/config"
+    }
+}

@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Proteus Module",
+    "description": "A Proteus-compatible configuration module",
+    "type": "object",
+    "properties": {
+        "$schema": {
+            "type": "string",
+            "enum": [ "http://localhost/v1/module.spec.json", "../ProteusOS/web/public/v1/module.spec.json" ]
+        },
+
+        "make": {
+            "type": "array",
+
+            "items": {
+                "type": "string",
+
+                "enum": [ "terraform" ]
+            }
+        },
+        
+        "terraform": {
+            "description": "The terraform parameters",
+            "anyOf": [
+                { "type": "boolean", "$comment": "When true, it will initialize with default" },
+                { "$ref": "http://json-schema.org/draft-07/schema#" }
+            ]
+        }
+
+    },
+    "required": [ "make" ],
+    "additionalProperties": false
+}

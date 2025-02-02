@@ -19,6 +19,7 @@
     "@mui/icons-material": "^6.4.0",
     "@mui/material": "^6.4.0",
     "@mui/material-nextjs": "^6.3.1",
+    "@ohm-vision/react-async": "^2.1.2",
     "next": "15.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
