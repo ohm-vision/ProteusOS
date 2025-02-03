@@ -7,6 +7,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "@/theme";
 import { text } from "@/utils/api.util";
 import { SigningKeyProvider } from "@/components/signingKey/signingKey.context";
+import InstallPWA from "@/components/pwa/installPwa.component";
 
 export const metadata: Metadata = {
   title: "ProteusOS",
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
       rel: "apple-touch-icon",
       url: "/icons/icon-192x192.png"
     },
-  ]
+  ],
   // appLinks: []
 };
 
@@ -47,6 +48,7 @@ export default async function RootLayout({ children }: React.PropsWithChildren) 
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
+            <InstallPWA />
             <SigningKeyProvider value={signingKey}>
               {children}
             </SigningKeyProvider>

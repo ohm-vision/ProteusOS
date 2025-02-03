@@ -1,7 +1,6 @@
 'use client';
 import { createTheme } from '@mui/material/styles';
 import { Roboto } from 'next/font/google';
-import NextLink from 'next/link';
 
 const roboto = Roboto({
   weight: ['300', '400', '500', '700'],
