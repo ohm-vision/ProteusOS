@@ -1,6 +1,6 @@
-// src/guards/internal-host.guard.ts
 import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from '@nestjs/common';
 import { Request } from 'express';
+import { TokenService } from 'src/token/token.service';
 
 @Injectable()
 export class InternalOnly implements CanActivate {
@@ -8,10 +8,24 @@ export class InternalOnly implements CanActivate {
         return hostname === "agent"; // Specify the allowed internal host
     }
 
-    canActivate(context: ExecutionContext): boolean {
+    constructor(
+        private readonly token: TokenService,
+    ) {}
+
+    async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest<Request>();
 
         if (InternalOnly.isInternal(request)) {
+            return true;
+        }
+
+        const clientId = (request.headers["x-client-id"] as string);
+
+        const signature = (request.headers["x-signature"] as string);
+
+        const payload = request.method === "GET" ? request.url : JSON.stringify(request.body);
+
+        if (this.token.verify(clientId, signature, payload )) {
             return true;
         }
 

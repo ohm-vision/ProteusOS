@@ -13,12 +13,6 @@ export class NpmController {
         private readonly service: NpmService
     ) {}
 
-    @Get("node_modules")
-    @UseGuards(InternalOnly)
-    node_modules() {
-        return this.service.node_modules();
-    }
-
     @Sse("install")
     install(
         @Query("name") name: string,

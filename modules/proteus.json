@@ -1,0 +1,53 @@
+{
+    "$schema": "../ProteusOS/web/public/v1/module.spec.json",
+
+    "terraform": {
+        "title": "Terraform Args",
+        "dir": "terraform",
+        "type": "object",
+        "properties": {
+            "aws": {
+                "type": "object",
+                "properties": {
+                    "region": {
+                        "type": "string",
+                        "enum": [ "us-west-1", "us-west-2" ]
+                    },
+
+                    "profile": {
+                        "type": "string",
+                        "default": "proteus"
+                    },
+
+                    "backend": {
+                        //- empty = local
+                        "type": "object",
+                        "properties": {
+                            //- then here the appropriate backend props?
+                        }
+                    }
+
+                },
+                "additionalProperties": false,
+
+                "required": [ "region" ]
+            },
+
+            "platform": {
+                "type": "string",
+                "default": "proteus"
+            },
+
+            "domains": {
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "description": "Domains allow you to seperate logical configurations"
+                }
+            }
+
+
+        }
+
+    }
+}

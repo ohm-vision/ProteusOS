@@ -3,7 +3,7 @@ import { Request } from "express";
 
 import { InternalOnly } from "../common/internal.guard";
 
-import { SshService } from "./ssh.service";
+import { SshService } from "./services/ssh.service";
 
 @Controller("ssh")
 export class SshController {
@@ -14,15 +14,7 @@ export class SshController {
     }
 
     @Get("publicKey")
-    async publicKey(
-        @Req() req: Request
-    ) {
-        if (InternalOnly.isInternal(req)) {
-            const publicKey = await this.service.publicKey();
-
-            return publicKey;
-        }
-
-        return "************* SSH PUBLIC KEY IS ONLY AVAILABLE LOCALLY ************";
+    async publicKey() {
+        return await this.service.publicKey();
     }
 }
