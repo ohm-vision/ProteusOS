@@ -21,13 +21,15 @@
     "@mui/material-nextjs": "^6.3.1",
     "@ohm-vision/react-async": "^2.1.2",
     "install": "^0.13.0",
-    "next": "15.1.4",
+    "mitt": "^3.0.1",
+    "next": "^15.1.6",
     "npm": "^10.9.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@types/json-schema": "^7.0.15",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

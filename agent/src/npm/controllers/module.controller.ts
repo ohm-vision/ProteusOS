@@ -10,12 +10,11 @@ export class NpmModuleController {
     ) {}
 
     @Get()
-    @UseGuards(InternalOnly)
     list() {
         return this.service.list();
     }
 
-    @Get(":name/schema")
+    @Get(":name")
     schema(
         @Param("name") name: string
     ) {

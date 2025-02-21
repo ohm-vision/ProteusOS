@@ -1,24 +1,24 @@
 # Stage 1: Build
-FROM node:lts AS builder
+FROM node:lts-alpine AS builder
 
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package.json package-lock.json ./
-
-# Install dependencies
-ARG NODE_ENV=production
-RUN if [ "$NODE_ENV" = "development" ]; then npm install; else npm install --production; fi
-
 # Copy the rest of the application code
 COPY . .
 
+# Clean old cache files
+RUN rm -rf ./dist ./node_modules
+
 # Build the application
-RUN if [ "$NODE_ENV" != "development" ]; then npm run build; fi
+RUN npm ci && \
+    npm run build
 
 # Stage 2: Production
-FROM node:lts-jod
+FROM node:lts-alpine
+
+ARG NODE_ENV="production"
+ARG TERRAFORM_VERSION="1.10.5"
 
 # Set the working directory
 WORKDIR /app
@@ -26,28 +26,37 @@ WORKDIR /app
 # Copy only the necessary files from the builder stage
 COPY --from=builder /app/package.json /app/package-lock.json /app/
 COPY --from=builder /app/dist /app/dist
-COPY --from=builder /app/node_modules /app/node_modules
+
+# Install production-only dependencies (all in development)
+RUN if [ "$NODE_ENV" == "development" ]; then npm ci; else npm ci --omit=dev; fi
 
 # Install common deps
-RUN apt-get update && apt-get install -y gnupg software-properties-common curl
-
-# HashiCorp
-RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-RUN echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
-
-# Update package lists
-RUN apt-get update
+RUN apk update && \
+    apk add --no-cache gnupg curl openssh
 
 # Install Terraform
-RUN apt-get install -y terraform
-RUN mkdir /modules/backend
-RUN cat <<EOF > /modules/terraform.tf 
+RUN apk add --update --virtual .deps --no-cache gnupg curl unzip && \
+    cd /tmp && \
+    wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
+    wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_SHA256SUMS && \
+    wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_SHA256SUMS.sig && \
+    wget -qO- https://www.hashicorp.com/.well-known/pgp-key.txt | gpg --import && \
+    gpg --verify terraform_${TERRAFORM_VERSION}_SHA256SUMS.sig terraform_${TERRAFORM_VERSION}_SHA256SUMS && \
+    grep "terraform_${TERRAFORM_VERSION}_linux_amd64.zip" terraform_${TERRAFORM_VERSION}_SHA256SUMS | sha256sum -c - && \
+    unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/local/bin && \
+    chmod +x /usr/local/bin/terraform && \
+    rm -f terraform_${TERRAFORM_VERSION}_linux_amd64.zip terraform_${TERRAFORM_VERSION}_SHA256SUMS terraform_${TERRAFORM_VERSION}_SHA256SUMS.sig && \
+    apk del .deps
+
+RUN mkdir -p /modules/backends
+RUN terraform --version && \
+    cat <<EOF > /modules/terraform.tf 
 terraform {
 }
 EOF
 
 # Configure NPM
-RUN cas <<EOF > /modules/package.json
+RUN cat <<EOF > /modules/package.json
 {
     "name": "@proteus/modules",
     "version": "1.0.0",
@@ -78,4 +87,4 @@ RUN chmod 600 /root/.ssh/config
 EXPOSE 3000
 
 # Start the application
-CMD if [ "$NODE_ENV" = "development" ]; then npm run start:dev; else npm run start:prod; fi
+CMD [ "npm", "run", "start:prod" ]

@@ -5,25 +5,26 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
-import { PublicKey } from '@/components/publicKey.component';
+import InstallPWA from '@/components/pwa/installPwa.component';
 
 // import ProTip from '@/components/ProTip';
 // import Copyright from '@/components/Copyright';
 
 export default function Home() {
   return (
-    <Container
-      maxWidth="lg"
-      sx={{
-        my: 4,
-        px: 1,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 2,
-      }}
+    <Box
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      gap={2}
+      flexGrow={1}
+      flexBasis="auto"
+      flexWrap="wrap"
+      my={2}
       >
+      <InstallPWA />
+
       <Image src="/icons/icon-192x192.png" alt="logo" width={100} height={100} />
       <Typography variant="h4" component="h1">
         ProteusOS
@@ -33,15 +34,9 @@ export default function Home() {
       </Typography>
       <Box
         display="flex"
-        justifyContent="center"
-        alignItems="center"
+        flexDirection={[ "column", "row" ]}
         gap={2}
-        flexGrow={1}
-        flexBasis="auto"
-        flexWrap="wrap"
-        my={2}
         >
-
         <Card>
           <CardActionArea
             href="/modules"
@@ -49,36 +44,39 @@ export default function Home() {
             <CardHeader
               title="Modules"
               />
-
           </CardActionArea>
         </Card>
 
-        {/** only enable this if we have proteus-devops */}
-        {/* <Card>
+        <Card>
           <CardActionArea
-            href="/environments"
+            href="/settings"
             >
             <CardHeader
-              title="Environments"
+              title="Settings"
               />
           </CardActionArea>
-        </Card> */}
-
-        {/** only enable this if we have proteus-domains - reserved for future implementation */}
-        {/* <Card>
-          <CardHeader
-            title="Domains"
-            />
-        </Card> */}
+        </Card>
 
       </Box>
-      <Container
-        maxWidth="md"
-        >
-        <PublicKey />
-      </Container>
-      {/* <ProTip />
-      <Copyright /> */}
-  </Container>
+      {/** only enable this if we have proteus-devops */}
+      {/* <Card>
+        <CardActionArea
+          href="/environments"
+          >
+          <CardHeader
+            title="Environments"
+            />
+        </CardActionArea>
+      </Card> */}
+
+      {/** only enable this if we have proteus-domains - reserved for future implementation */}
+      {/* <Card>
+        <CardHeader
+          title="Domains"
+          />
+      </Card> */}
+
+    </Box>
+
   );
 }

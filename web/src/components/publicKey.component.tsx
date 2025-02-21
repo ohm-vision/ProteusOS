@@ -1,9 +1,13 @@
+"use client";
 
+import { usePublicKey } from "@/data/publicKey";
 import { Alert, AlertTitle } from "@mui/material";
 
-import { publicKey } from "@/data/publicKey";
+export function PublicKey() {
 
-export async function PublicKey() {
+    const [ key, loading ] = usePublicKey();
+
+    if (loading) return;
 
     return (
         <Alert
@@ -15,7 +19,7 @@ export async function PublicKey() {
             }}
             >
             <AlertTitle>Server Public Key</AlertTitle>
-            {publicKey()}
+            {key}
         </Alert>
     );
 }

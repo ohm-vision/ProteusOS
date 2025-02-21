@@ -1,24 +1,33 @@
 import { createHmac } from "crypto";
 
-export const local = process.env.API_ENDPOINT;
-
 const ResponseTypes = [ "text", "json", "arrayBuffer", "blob", "bytes", "formData" ] as const;
 
-type ResponseType = typeof ResponseTypes[number];
+const host = `${process.env.NEXT_PUBLIC_API_ENDPOINT || ""}`;
+
+function getHost() {
+    if (global.window?.location !== undefined) {
+        return "";
+    }
+
+    return host;
+}
+
+export type ResponseType = typeof ResponseTypes[number];
 
 export class Api {
-    readonly host?: string = local || "";
     private readonly prefix: string;
 
     constructor(
         private readonly type: ResponseType = "json",
         prefix?: string,
     ) {
+        if (!ResponseTypes.includes(type)) throw new Error(`Response Type ${type} invalid`);
+
         this.prefix = prefix ? `/${prefix}` : "";
     }
 
     async fetch(endpoint: string = "", { signingKey, ...init }: RequestInit & { signingKey?: string | false } = {}) {
-        const url = `${this.host}/api${this.prefix}/${endpoint}`;
+        const url = `${getHost()}/api${this.prefix}/${endpoint}`;
 
         const res = await fetch(url, {
             ...init,
@@ -40,5 +49,5 @@ export const json = new Api("json");
 export const text = new Api("text");
 
 export function sse(url: string, init?: EventSourceInit) {
-    return new EventSource(`${local || ""}/api/${url}`, init);
+    return new EventSource(`${getHost()}/api/${url}`, init);
 }

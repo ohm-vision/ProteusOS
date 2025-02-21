@@ -3,7 +3,7 @@ import { ExecOptions, SpawnOptionsWithoutStdio } from "child_process";
 import { ExecService } from "../../exec/exec.service";
 import { lastValueFrom } from "rxjs";
 
-const command = "terraform" as const;
+const command = "/usr/local/bin/terraform" as const;
 
 @Injectable()
 export class TerraformService implements OnModuleInit {
@@ -15,7 +15,7 @@ export class TerraformService implements OnModuleInit {
 
     async onModuleInit() {
 
-        const { stdout, stderr } = await this.exec({}, "version");
+        const { stdout, stderr } = await this.exec({}, "--version");
 
         if (stderr) {
             //- todo: attempt auto-install?
